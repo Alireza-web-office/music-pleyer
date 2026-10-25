@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070914">
+<title>AW NEON PLAYER</title>
+<style>
+:root{--bg:#070914;--panel:#10162a;--blue:#26d9ff;--purple:#a855f7;--text:#f3f7ff;--muted:#8e9bb8}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#18234b 0%,#070914 55%);color:var(--text);font-family:Tahoma,Arial,sans-serif;display:flex;justify-content:center;align-items:center;padding:18px}
+.app{width:min(100%,430px);border:1px solid #27365d;background:linear-gradient(160deg,rgba(20,29,56,.96),rgba(7,9,20,.98));border-radius:28px;padding:23px 20px 20px;box-shadow:0 0 35px #1263a52b, inset 0 0 25px #7438ff0a;overflow:hidden;position:relative}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}.brand{font-weight:900;letter-spacing:2px;font-size:17px}.brand span{color:var(--blue);text-shadow:0 0 12px #26d9ff88}.pill{font-size:10px;color:var(--blue);border:1px solid #26d9ff66;border-radius:20px;padding:7px 10px;letter-spacing:1px}
+.disc-wrap{display:flex;justify-content:center;margin:12px 0 25px}.disc{width:210px;height:210px;border-radius:50%;display:grid;place-items:center;background:repeating-radial-gradient(circle,#12182c 0 4px,#080b17 5px 8px);border:2px solid #293e67;box-shadow:0 0 30px #26d9ff22,0 0 65px #8b5cf622;position:relative;animation:spin 10s linear infinite;animation-play-state:paused}.disc.playing{animation-play-state:running}.disc:before{content:"";position:absolute;inset:15px;border-radius:50%;border:1px solid #26d9ff55}.disc:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#26d9ff,#6c4dff 70%);box-shadow:0 0 24px #26d9ff99}.disc-center{z-index:1;font-weight:900;font-size:16px;color:#07101c;letter-spacing:1px}@keyframes spin{to{transform:rotate(360deg)}}
+.track{text-align:center;min-height:66px}.track h1{font-size:19px;margin:0 0 8px;overflow-wrap:anywhere}.track p{margin:0;color:var(--muted);font-size:12px}
+.timeline{margin-top:22px}.times{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;direction:ltr;margin-bottom:8px}input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}.seek{height:5px}
+.controls{display:flex;align-items:center;justify-content:center;gap:22px;margin:21px 0}.ctrl{border:0;background:transparent;color:#dceaff;font-size:23px;cursor:pointer;padding:8px}.play{width:64px;height:64px;border-radius:50%;border:1px solid #7beaff;background:linear-gradient(135deg,#26d9ff,#6870ff);color:#07101c;font-size:25px;box-shadow:0 0 24px #26d9ff55;cursor:pointer}
+.lower{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px;margin:4px 0 18px}.lower input{flex:1}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.action{border:1px solid #2a4169;background:#111a31;color:#e9f7ff;border-radius:14px;padding:13px 9px;font-family:inherit;font-size:12px;cursor:pointer}.action strong{display:block;color:var(--blue);font-size:13px;margin-bottom:5px}.action:active,.action:hover{border-color:var(--blue);box-shadow:0 0 14px #26d9ff20}
+#fileInput{display:none}.notice{text-align:center;font-size:10px;color:#697a9b;margin-top:17px;line-height:1.8}.status{color:var(--blue);font-size:11px;text-align:center;min-height:17px;margin-top:10px}
+@media(max-height:750px){.app{padding:18px}.disc{width:165px;height:165px}.disc:after{width:58px;height:58px}.disc-wrap{margin:8px 0 18px}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top"><div class="brand">ALIREZA <span>WEB</span></div><div class="pill">NEON PLAYER</div></header>
+  <div class="disc-wrap"><div class="disc" id="disc"><div class="disc-center">AW MUSIC</div></div></div>
+  <section class="track"><h1 id="title">هنوز آهنگی انتخاب نشده</h1><p id="subtitle">یک آهنگ از گوشی انتخاب کن 🎧</p></section>
+  <audio id="audio" preload="metadata"></audio>
+  <div class="timeline"><div class="times"><span id="current">00:00</span><span id="duration">00:00</span></div><input aria-label="موقعیت آهنگ" id="seek" class="seek" type="range" min="0" max="1000" value="0"></div>
+  <div class="controls">
+    <button class="ctrl" id="prev" aria-label="آهنگ قبلی">⏮</button>
+    <button class="play" id="play" aria-label="پخش">▶</button>
+    <button class="ctrl" id="next" aria-label="آهنگ بعدی">⏭</button>
+  </div>
+  <div class="lower"><span>🔉</span><input aria-label="بلندی صدا" id="volume" type="range" min="0" max="1" step="0.01" value="0.8"><span>🔊</span></div>
+  <div class="actions">
+    <button class="action" id="choose"><strong>＋ انتخاب آهنگ</strong>از حافظه گوشی</button>
+    <button class="action" id="playlist"><strong>♫ فهرست پخش</strong><span id="count">۰ آهنگ</span></button>
+  </div>
+  <input id="fileInput" type="file" accept="audio/*" multiple>
+  <div class="status" id="status">آماده پخش • AW NEON PLAYER</div>
+  <div class="notice">فایل‌ها فقط روی همین دستگاه پخش می‌شوند؛ چیزی آپلود نمی‌شود.<br>برای بهترین نتیجه، صفحه را در مرورگر باز کن.</div>
+</main>
+<script>
+const audio=document.getElementById('audio'), input=document.getElementById('fileInput');
+const title=document.getElementById('title'), subtitle=document.getElementById('subtitle'), disc=document.getElementById('disc');
+const playBtn=document.getElementById('play'), seek=document.getElementById('seek'), current=document.getElementById('current'), duration=document.getElementById('duration'), status=document.getElementById('status'), count=document.getElementById('count');
+let tracks=[], index=0, objectUrl=null, seeking=false;
+const faNum=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+function time(s){if(!Number.isFinite(s))return '00:00';let m=Math.floor(s/60),sec=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')}
+function load(i,autoplay=false){if(!tracks.length)return;index=(i+tracks.length)%tracks.length;if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(tracks[index]);audio.src=objectUrl;title.textContent=tracks[index].name.replace(/\.[^.]+$/,'');subtitle.textContent=`آهنگ ${faNum(index+1)} از ${faNum(tracks.length)}`;count.textContent=faNum(tracks.length)+' آهنگ';status.textContent='آهنگ آماده پخش';if(autoplay)audio.play().catch(()=>status.textContent='برای پخش، دکمه ▶ را بزن');}
+function updatePlay(){const on=!audio.paused;playBtn.textContent=on?'❚❚':'▶';disc.classList.toggle('playing',on);status.textContent=on?'در حال پخش ♪':'پخش متوقف است'}
+document.getElementById('choose').onclick=()=>input.click();
+input.onchange=()=>{const files=[...input.files].filter(f=>f.type.startsWith('audio/'));if(!files.length){status.textContent='فایل صوتی معتبری انتخاب نشد';return}tracks=files;load(0,true);input.value=''};
+playBtn.onclick=()=>{if(!tracks.length){input.click();return}if(audio.paused)audio.play().catch(()=>{});else audio.pause()};
+document.getElementById('prev').onclick=()=>{if(tracks.length)load(index-1,true)};
+document.getElementById('next').onclick=()=>{if(tracks.length)load(index+1,true)};
+document.getElementById('playlist').onclick=()=>{if(!tracks.length){status.textContent='اول آهنگ انتخاب کن';return}status.textContent=tracks.map((t,i)=>(i===index?'▶ ':'')+(i+1)+'. '+t.name).join(' • ').slice(0,180)};
+audio.addEventListener('play',updatePlay);audio.addEventListener('pause',updatePlay);audio.addEventListener('ended',()=>{if(tracks.length)load(index+1,true)});
+audio.addEventListener('loadedmetadata',()=>{duration.textContent=time(audio.duration);seek.value=0});
+audio.addEventListener('timeupdate',()=>{if(!seeking){current.textContent=time(audio.currentTime);seek.value=audio.duration?audio.currentTime/audio.duration*1000:0}});
+seek.addEventListener('input',()=>{seeking=true;if(audio.duration)current.textContent=time(seek.value/1000*audio.duration)});
+seek.addEventListener('change',()=>{if(audio.duration)audio.currentTime=seek.value/1000*audio.duration;seeking=false});
+document.getElementById('volume').oninput=e=>audio.volume=Number(e.target.value);audio.volume=.8;
+</script>
+</body></html>
